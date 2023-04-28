@@ -19,54 +19,54 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 staging_events_table_create = """
 CREATE TABLE IF NOT EXISTS staging_events (
-    log_id identity(0,1) PRIMARY KEY, 
+    log_id int identity(0,1) PRIMARY KEY, 
     ts bigint,
     page varchar,
-    userId integer,
-    firstName varchar,
-    lastName varchar,
+    userId int,
+    firstName varchar(max),
+    lastName varchar(max),
     gender varchar,
     level varchar,
-    sessionId integer,
-    location varchar,
-    userAgent varchar
+    sessionId int,
+    location varchar(max),
+    userAgent varchar(max)
 );
 """
 
 staging_songs_table_create = """
 CREATE TABLE IF NOT EXISTS staging_songs (
-    num_songs integer PRIMARY KEY,
+    num_songs int PRIMARY KEY,
     artist_id varchar,
-    artist_name varchar,
-    artist_location varchar,
+    artist_name varchar(max),
+    artist_location varchar(max),
     artist_latitude double precision,
     artist_longitude double precision,
     song_id varchar,
-    title varchar,
-    year integer,
+    title varchar(max),
+    year int,
     duration double precision
 );
 """
 
 songplay_table_create = """
 CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id identity(0,1) PRIMARY KEY, 
+    songplay_id int identity(0,1) PRIMARY KEY, 
     start_time timestamp NOT NULL, 
-    user_id integer NOT NULL, 
+    user_id int NOT NULL, 
     level varchar, 
     song_id varchar, 
     artist_id varchar, 
-    session_id integer, 
-    location varchar, 
-    user_agent varchar
+    session_id int, 
+    location varchar(max), 
+    user_agent varchar(max)
 );
 """
 
 user_table_create = """
 CREATE TABLE IF NOT EXISTS users (
     user_id int PRIMARY KEY, 
-    first_name varchar NOT NULL, 
-    last_name varchar NOT NULL,  
+    first_name varchar(max) NOT NULL, 
+    last_name varchar(max) NOT NULL,  
     gender varchar, 
     level varchar
 );
@@ -75,9 +75,9 @@ CREATE TABLE IF NOT EXISTS users (
 song_table_create = """
 CREATE TABLE IF NOT EXISTS songs (
     song_id varchar PRIMARY KEY, 
-    title varchar NOT NULL, 
+    title varchar(max) NOT NULL, 
     artist_id varchar, 
-    year integer, 
+    year int, 
     duration float NOT NULL
 );
 """
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS songs (
 artist_table_create = """
 CREATE TABLE IF NOT EXISTS artists (
     artist_id varchar PRIMARY KEY, 
-    name varchar NOT NULL, 
-    location varchar, 
+    name varchar(max) NOT NULL, 
+    location varchar(max), 
     latitude double precision, 
     longitude double precision
 );
@@ -95,12 +95,12 @@ CREATE TABLE IF NOT EXISTS artists (
 time_table_create = """
 CREATE TABLE IF NOT EXISTS time (
     start_time timestamp PRIMARY KEY, 
-    hour integer NOT NULL, 
-    day integer NOT NULL, 
-    week integer NOT NULL, 
-    month integer NOT NULL, 
-    year integer NOT NULL, 
-    weekday integer NOT NULL
+    hour int NOT NULL, 
+    day int NOT NULL, 
+    week int NOT NULL, 
+    month int NOT NULL, 
+    year int NOT NULL, 
+    weekday int NOT NULL
 );
 """
 
@@ -108,17 +108,19 @@ CREATE TABLE IF NOT EXISTS time (
 
 staging_events_copy = (
     """
-COPY staging_events_table FROM 's3://udacity-dend/log_data'
+COPY staging_events_table 
+FROM 's3://udacity-de-project3-udacity-dend/log-data'
                         iam_role {}
-                        json 's3://udacity-dend/log_json_path.json' ;
+                        json 'auto';
 """
 ).format(config["IAM_ROLE"]["ARN"])
 
+
 staging_songs_copy = (
     """
-COPY staging_songs_table FROM 's3://udacity-dend/log_data'
+COPY staging_songs_table FROM 's3://udacity-de-project3-udacity-dend/song-data'
                            iam_role {}
-                           json 's3://udacity-dend/log_json_path.json' ;
+                           json 'auto';
 """
 ).format(config["IAM_ROLE"]["ARN"])
 
