@@ -19,23 +19,29 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 staging_events_table_create = """
 CREATE TABLE IF NOT EXISTS staging_events (
-    log_id int identity(0,1) PRIMARY KEY, 
-    ts bigint,
+    ts timestamp,
     page varchar,
-    userId int,
-    firstName varchar(max),
-    lastName varchar(max),
+    userId varchar,
+    firstName varchar,
+    lastName varchar,
     gender varchar,
     level varchar,
-    sessionId int,
-    location varchar(max),
-    userAgent varchar(max)
+    sessionId varchar,
+    location varchar,
+    userAgent text,
+    artist varchar,
+    auth text,
+    itemInSession int,
+    length float,
+    method varchar,
+    registration varchar,
+    song varchar,
+    status varchar
 );
 """
 
 staging_songs_table_create = """
 CREATE TABLE IF NOT EXISTS staging_songs (
-    num_songs int PRIMARY KEY,
     artist_id varchar,
     artist_name varchar(max),
     artist_location varchar(max),
@@ -108,21 +114,21 @@ CREATE TABLE IF NOT EXISTS time (
 
 staging_events_copy = (
     """
-COPY staging_events_table 
-FROM 's3://udacity-de-project3-udacity-dend/log-data'
-                        iam_role {}
-                        json 'auto';
-"""
-).format(config["IAM_ROLE"]["ARN"])
+        COPY staging_events FROM '{}'
+        iam_role '{}'
+        json '{}'
+        REGION 'us-west-2';
+    """
+).format(config.get("S3", "LOG_DATA"), config.get("IAM_ROLE", "ARN"), config.get("S3", "LOG_JSONPATH"))
 
 
 staging_songs_copy = (
     """
-COPY staging_songs_table FROM 's3://udacity-de-project3-udacity-dend/song-data'
-                           iam_role {}
-                           json 'auto';
-"""
-).format(config["IAM_ROLE"]["ARN"])
+        COPY staging_songs FROM '{}'
+        iam_role '{}'
+        REGION 'us-west-2';
+    """
+).format(config.get("S3", "SONG_DATA"), config.get("IAM_ROLE", "ARN"))
 
 # FINAL TABLES
 
