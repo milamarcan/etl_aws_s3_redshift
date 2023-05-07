@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS staging_songs(
 
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays(
-    songplay_id int identity(0,1) primary key,
-    start_time timestamp,
+    songplay_id int identity(0,1) primary key sortkey,
+    start_time timestamp distkey,
     user_id int,
     level varchar,
     song_id varchar,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS songplays(
 
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users(
-    user_id int PRIMARY KEY,
+    user_id int PRIMARY KEY sortkey,
     first_name varchar,
     last_name varchar,
     gender varchar,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs(
-    song_id varchar PRIMARY KEY,
+    song_id varchar PRIMARY KEY sortkey,
     title varchar, 
     artist_id varchar,
     year int,
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS songs(
 
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists(
-    artist_id varchar PRIMARY KEY ,
+    artist_id varchar PRIMARY KEY sortkey,
     name varchar, 
     location varchar, 
     latitude numeric,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS artists(
 
 time_table_create = ("""
 CREATE TABLE IF NOT EXISTS time(
-    start_time timestamp PRIMARY KEY,
+    start_time timestamp PRIMARY KEY sortkey distkey,
     hour int, 
     day int,
     week int,
@@ -107,7 +107,9 @@ staging_events_copy = ("""
     FROM {}
     IAM_ROLE '{}'
     REGION '{}'
-    FORMAT  JSON {};
+    FORMAT  JSON {}
+    TIMEFORMAT  'epochmillisecs'
+    TRUNCATECOLUMNS BLANKSASNULL EMPTYASNULL;
 """).format(
     config['S3']['LOG_DATA'],
     config['IAM_ROLE']['ARN'],
