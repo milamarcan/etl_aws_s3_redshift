@@ -7,6 +7,10 @@ that extracts data from JSON files located in S3, loads them into staging tables
 A startup called Sparkify wants to analyze the data they've been collecting on songs and user activity on their new music streaming app. The analytics team is particularly interested in understanding what songs users are listening to. 
 Their data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app. 
 
+
+## High-level architecture of the project
+![Architecture of the project](/img/Sparkify-architecture.jpg)
+
 ## Logical Data Model for the project
 ![Data Model for ETL AWS Sparkify project](/img/DataModelAWSSparkify.jpg)
 
